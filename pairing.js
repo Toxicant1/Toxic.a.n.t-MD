@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const pino = require('pino');
 const { 
     default: makeWASocket, 
@@ -14,7 +15,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 function startWeb() {
-    app.use(express.static('public'));
+    // FIX: Serve the public folder and assets correctly
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
     app.get('/code', async (req, res) => {
         let num = req.query.number;
@@ -22,13 +25,9 @@ function startWeb() {
 
         num = num.replace(/[^0-9]/g, '');
 
-        // Remove previous temp folder
         if (fs.existsSync(`./temp/${num}`)) {
             fs.rmSync(`./temp/${num}`, { recursive: true, force: true });
         }
-
-        console.log("---------------------------------------");
-        console.log(`🚀 ATTEMPTING SECURE LINK FOR: ${num}`);
 
         const { state, saveCreds } = await useMultiFileAuthState(`./temp/${num}`);
 
@@ -40,38 +39,33 @@ function startWeb() {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                browser: Browsers.ubuntu("Chrome"),
+                browser: Browsers.ubuntu("Chrome"), // Use built-in stable browser
                 connectTimeoutMs: 120000,
                 defaultQueryTimeoutMs: 120000,
-                keepAliveIntervalMs: 10000,
-                syncFullHistory: false,
+                syncFullHistory: false, // CRITICAL: Stop history sync to prevent link failure
                 markOnlineOnConnect: true
             });
 
-            // Timeout in case QR/connection takes too long
-            const timeout = setTimeout(() => {
+            // --- THE FIX FOR "COULDN'T CONNECT" ---
+            // We must wait for the socket to stabilize BEFORE requesting the pairing code
+            if (!sock.authState.creds.registered) {
+                await delay(10000); // Give Render 10 seconds to establish the secure TLS tunnel
+                const code = await sock.requestPairingCode(num);
+                
                 if (!res.headersSent) {
-                    res.status(408).json({ error: "WhatsApp took too long. Try again." });
-                    sock.end();
+                    res.json({ code: code });
+                    console.log(`✅ PAIRING CODE GENERATED: ${code}`);
                 }
-            }, 90000); // Increased to 90 seconds
+            }
 
-            // Listen for connection updates
+            sock.ev.on('creds.update', saveCreds);
+
             sock.ev.on('connection.update', async (update) => {
-                const { connection, lastDisconnect, qr } = update;
+                const { connection, lastDisconnect } = update;
 
-                // QR received
-                if (qr && !res.headersSent) {
-                    clearTimeout(timeout);
-                    res.json({ code: qr });
-                    console.log(`✅ QR GENERATED for ${num}`);
-                }
-
-                // Successfully connected
                 if (connection === 'open') {
                     console.log(`🏆 LINKED SUCCESSFULLY: ${num}`);
-
-                    await delay(3000); // Wait for socket stabilization
+                    await delay(5000); 
 
                     const sessionFile = `./temp/${num}/creds.json`;
                     if (fs.existsSync(sessionFile)) {
@@ -79,29 +73,27 @@ function startWeb() {
                         const sessionID = Buffer.from(JSON.stringify(creds)).toString('base64');
 
                         await sock.sendMessage(sock.user.id, {
-                            text: `*TOXICANT-MD SESSION ID*\n\n*ID:* Toxicant;;${sessionID}\n\n_Successfully connected via Render Station._`
+                            text: `*𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD SESSION ID*\n\n*ID:* Toxicant;;${sessionID}`
                         });
                     }
 
-                    // Cleanup temp folder after 10s
                     setTimeout(() => {
                         try { fs.rmSync(`./temp/${num}`, { recursive: true, force: true }); } catch(e) {}
                     }, 10000);
                 }
 
-                // Connection closed
                 if (connection === 'close') {
                     let reason = lastDisconnect?.error?.output?.statusCode;
-                    console.log(`❌ Connection Closed. Reason Code: ${reason}`);
+                    // If the link fails, clean up the folder so the user can try again fresh
+                    if (reason !== DisconnectReason.loggedOut) {
+                        console.log(`❌ Link failed (Code: ${reason}). Recommendation: Refresh site.`);
+                    }
                 }
             });
 
-            // Save credentials on update
-            sock.ev.on('creds.update', saveCreds);
-
         } catch (e) {
             console.log("❌ ERROR:", e);
-            if (!res.headersSent) res.status(500).json({ error: "Handshake Failed" });
+            if (!res.headersSent) res.status(500).json({ error: "Server Busy. Try again." });
         }
     });
 
