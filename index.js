@@ -1,11 +1,6 @@
-const { startPairing, startWeb } = require("./pairing");
-const { startBot } = require("./main");
+const { startWeb } = require("./pairing");
 
-// Start web pairing page
+// Start the clean pairing interface
+// This handles the web UI and the Baileys pairing logic
+console.log("SYSTEM: Initializing Toxicant-MD Web Service...");
 startWeb();
-
-// Start WhatsApp bot connection
-startPairing();
-
-// Start command handler
-startBot();
