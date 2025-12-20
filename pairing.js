@@ -15,27 +15,19 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 function startWeb() {
-    // FIX: Properly serve static files from the 'public' directory
-    // Ensure your assets folder is INSIDE the public folder
     app.use(express.static(path.join(__dirname, 'public')));
     app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
     app.get('/code', async (req, res) => {
         let num = req.query.number;
         if (!num) return res.status(400).json({ error: "No number provided" });
-
-        // Clean number format
         num = num.replace(/[^0-9]/g, '');
 
-        // Wipe old temp sessions to avoid "Already Logged In" or corruption
-        if (fs.existsSync(`./temp/${num}`)) {
-            fs.rmSync(`./temp/${num}`, { recursive: true, force: true });
-        }
+        // FIX: Create a unique temp folder for EVERY attempt to avoid "Fast Errors"
+        const sessionId = `${num}_${Date.now()}`;
+        const sessionPath = `./temp/${sessionId}`;
 
-        console.log("---------------------------------------");
-        console.log(`🚀 STARTING PAIRING FOR: ${num}`);
-
-        const { state, saveCreds } = await useMultiFileAuthState(`./temp/${num}`);
+        const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
 
         try {
             const sock = makeWASocket({
@@ -45,27 +37,17 @@ function startWeb() {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                // Using a stable Desktop browser signature
-                browser: Browsers.ubuntu("Chrome"), 
-                // Increased timeouts to survive Render's slow free tier
-                connectTimeoutMs: 120000, 
-                defaultQueryTimeoutMs: 120000,
-                keepAliveIntervalMs: 20000,
-                // CRITICAL: Stop the bot from crashing during history download
+                browser: Browsers.ubuntu("Chrome"),
+                connectTimeoutMs: 60000, 
+                // CRITICAL: Disable history to keep Render's RAM usage low
                 syncFullHistory: false, 
                 shouldSyncHistoryMessage: () => false,
-                getMessage: async (key) => { return { conversation: 'Toxicant-MD' } }
             });
 
-            // If not registered, wait for socket stabilization then get code
             if (!sock.authState.creds.registered) {
-                await delay(10000); // 10s stabilization delay is mandatory for Render
+                await delay(5000); 
                 const code = await sock.requestPairingCode(num);
-
-                if (!res.headersSent) {
-                    res.json({ code: code });
-                    console.log(`✅ PAIRING CODE GENERATED: ${code}`);
-                }
+                if (!res.headersSent) res.json({ code: code });
             }
 
             sock.ev.on('creds.update', saveCreds);
@@ -74,48 +56,38 @@ function startWeb() {
                 const { connection, lastDisconnect } = update;
 
                 if (connection === 'open') {
-                    console.log(`🏆 LINKED SUCCESSFULLY: ${num}`);
-                    await delay(8000); // Wait for final encryption write
+                    console.log(`🏆 SUCCESS: ${num}`);
+                    await delay(5000); 
 
-                    const sessionFile = `./temp/${num}/creds.json`;
+                    const sessionFile = `${sessionPath}/creds.json`;
                     if (fs.existsSync(sessionFile)) {
                         const creds = JSON.parse(fs.readFileSync(sessionFile));
-                        // Convert credentials to Base64 for deployment
                         const sessionID = Buffer.from(JSON.stringify(creds)).toString('base64');
 
-                        // Use plain text for the ID to prevent font-related buffer errors
                         await sock.sendMessage(sock.user.id, {
-                            text: `TOXICANT-MD-SESSION-ID\n\nID: Toxicant;;${sessionID}\n\n_Do not share this ID with anyone._`
+                            text: `TOXICANT-MD;;${sessionID}`
                         });
                     }
-
-                    // Auto-cleanup temp files after success
-                    setTimeout(() => {
-                        try { fs.rmSync(`./temp/${num}`, { recursive: true, force: true }); } catch(e) {}
-                    }, 15000);
+                    // Clean up specific session folder
+                    setTimeout(() => fs.rmSync(sessionPath, { recursive: true, force: true }), 10000);
                 }
 
                 if (connection === 'close') {
                     const reason = lastDisconnect?.error?.output?.statusCode;
-                    console.log(`❌ Connection Closed. Code: ${reason}`);
-                    
-                    // If the user hasn't logged out, this might be a temporary error
-                    if (reason === DisconnectReason.restartRequired) {
-                        console.log("Restarting connection...");
-                    }
+                    console.log(`❌ Closed: ${reason}`);
+                    // If link fails, clear the specific temp folder immediately
+                    try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch(e) {}
                 }
             });
 
         } catch (e) {
-            console.log("❌ INTERNAL ERROR:", e);
-            if (!res.headersSent) res.status(500).json({ error: "Service Timeout. Refresh and try again." });
+            console.log("❌ ERROR:", e);
+            if (!res.headersSent) res.status(500).json({ error: "Try again" });
         }
     });
 
     app.listen(port, () => {
-        console.log(`\n=======================================`);
-        console.log(`   TOXICANT-MD LIVE ON PORT ${port}   `);
-        console.log(`=======================================\n`);
+        console.log(`SERVER LIVE ON PORT ${port}`);
     });
 }
 
