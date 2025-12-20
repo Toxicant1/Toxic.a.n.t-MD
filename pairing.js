@@ -23,8 +23,8 @@ function startWeb() {
         if (!num) return res.status(400).json({ error: "No number provided" });
         num = num.replace(/[^0-9]/g, '');
 
-        // FIX: Create a unique temp folder for EVERY attempt to avoid "Fast Errors"
-        const sessionId = `${num}_${Date.now()}`;
+        // Generate a completely fresh session ID for every single click
+        const sessionId = `Session_${Math.floor(Math.random() * 10000)}`;
         const sessionPath = `./temp/${sessionId}`;
 
         const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
@@ -37,15 +37,16 @@ function startWeb() {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                browser: Browsers.ubuntu("Chrome"),
-                connectTimeoutMs: 60000, 
-                // CRITICAL: Disable history to keep Render's RAM usage low
+                // CHANGE: This makes WhatsApp think you are on an iPhone/Android
+                browser: ["Chrome (Android)", "Chrome", "1.0.0"], 
+                connectTimeoutMs: 120000, 
                 syncFullHistory: false, 
                 shouldSyncHistoryMessage: () => false,
             });
 
             if (!sock.authState.creds.registered) {
-                await delay(5000); 
+                // Wait slightly longer for the mobile handshake to stabilize
+                await delay(7000); 
                 const code = await sock.requestPairingCode(num);
                 if (!res.headersSent) res.json({ code: code });
             }
@@ -56,7 +57,7 @@ function startWeb() {
                 const { connection, lastDisconnect } = update;
 
                 if (connection === 'open') {
-                    console.log(`🏆 SUCCESS: ${num}`);
+                    console.log(`🏆 LINKED: ${num}`);
                     await delay(5000); 
 
                     const sessionFile = `${sessionPath}/creds.json`;
@@ -64,25 +65,25 @@ function startWeb() {
                         const creds = JSON.parse(fs.readFileSync(sessionFile));
                         const sessionID = Buffer.from(JSON.stringify(creds)).toString('base64');
 
+                        // Use a very simple string to ensure no message errors
                         await sock.sendMessage(sock.user.id, {
-                            text: `TOXICANT-MD;;${sessionID}`
+                            text: `Toxicant;;${sessionID}`
                         });
                     }
-                    // Clean up specific session folder
-                    setTimeout(() => fs.rmSync(sessionPath, { recursive: true, force: true }), 10000);
+                    setTimeout(() => fs.rmSync(sessionPath, { recursive: true, force: true }), 15000);
                 }
 
                 if (connection === 'close') {
                     const reason = lastDisconnect?.error?.output?.statusCode;
-                    console.log(`❌ Closed: ${reason}`);
-                    // If link fails, clear the specific temp folder immediately
+                    console.log(`❌ Failed with code: ${reason}`);
+                    // Wipe the failed session immediately
                     try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch(e) {}
                 }
             });
 
         } catch (e) {
             console.log("❌ ERROR:", e);
-            if (!res.headersSent) res.status(500).json({ error: "Try again" });
+            if (!res.headersSent) res.status(500).json({ error: "Try a different number or VPN" });
         }
     });
 
