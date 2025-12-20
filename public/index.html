@@ -5,29 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToxicAnt-MD Pairing</title>
     <style>
-        :root { --neon: #00f2ff; --bg: #0a0a0a; --card: #151515; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); width: 90%; max-width: 400px; text-align: center; }
-        h2 { color: var(--neon); text-transform: uppercase; letter-spacing: 2px; }
+        :root { --neon: #00f2ff; --bg: #0a0a0a; --card: #151515; --success: #00ff88; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .container { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); width: 90%; max-width: 400px; text-align: center; position: relative; }
+        h2 { color: var(--neon); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
         
-        /* --- Line Breaker Style --- */
         .divider { height: 2px; background: linear-gradient(90deg, transparent, var(--neon), transparent); margin: 20px 0; }
         
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--neon); border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        
+        button { width: 100%; padding: 12px; background: var(--neon); border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; color: #000; }
         button:hover { box-shadow: 0 0 15px var(--neon); transform: scale(1.02); }
-        #result { margin-top: 20px; font-size: 1.5rem; font-weight: bold; color: #00ff88; letter-spacing: 5px; }
+        button:disabled { background: #333; cursor: not-allowed; transform: scale(1); }
+
+        #result { margin-top: 20px; font-size: 2rem; font-weight: bold; color: var(--success); letter-spacing: 8px; cursor: pointer; min-height: 40px; }
+        #status { font-size: 0.85rem; opacity: 0.8; margin-top: 10px; min-height: 20px; color: #aaa; }
+        
+        /* Loading Animation */
+        .spinner { display: none; margin: 10px auto; width: 30px; height: 30px; border: 3px solid rgba(0,242,255,.3); border-radius: 50%; border-top-color: var(--neon); animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD</h2>
-        <div class="divider"></div> <p>Enter your phone number with country code</p>
-        <input type="text" id="number" placeholder="e.g. 254741819582">
-        <button onclick="getCode()">Generate Pairing Code</button>
+        <div class="divider"></div>
+        <p style="margin-bottom: 10px;">Enter WhatsApp Number</p>
+        <input type="number" id="number" placeholder="254">
+        <button id="btn" onclick="getCode()">Generate Code</button>
         
-        <div class="divider"></div> <div id="result"></div>
-        <p id="status" style="font-size: 0.8rem; opacity: 0.6;"></p>
+        <div class="spinner" id="loader"></div>
+        <div class="divider"></div>
+        
+        <div id="result" title="Click to copy" onclick="copyCode()"></div>
+        <p id="status"></p>
     </div>
 
     <script>
@@ -35,22 +47,49 @@
             const num = document.getElementById('number').value;
             const status = document.getElementById('status');
             const result = document.getElementById('result');
-            if(!num) return alert("Enter number!");
+            const btn = document.getElementById('btn');
+            const loader = document.getElementById('loader');
+
+            if(!num || num.length < 10) return alert("Please enter a valid phone number with country code!");
             
-            status.innerText = "Connecting to WhatsApp...";
+            // UI State: Loading
+            btn.disabled = true;
+            loader.style.display = "block";
             result.innerText = "";
+            status.style.color = "#aaa";
+            status.innerText = "Requesting pairing code...";
 
             try {
-                const response = await fetch(`/code?number=${num}`);
+                // We use a timeout to handle slow Render cold-starts
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 40000); 
+
+                const response = await fetch(`/code?number=${num}`, { signal: controller.signal });
                 const data = await response.json();
+                
+                clearTimeout(timeoutId);
+
                 if(data.code) {
                     result.innerText = data.code;
-                    status.innerText = "Enter this code in WhatsApp > Linked Devices > Link with Phone Number";
+                    status.style.color = "#00ff88";
+                    status.innerText = "TAP CODE TO COPY. Then go to WhatsApp > Linked Devices > Link with Phone Number.";
                 } else {
-                    status.innerText = "Error: " + data.error;
+                    throw new Error(data.error || "Failed to get code");
                 }
             } catch (err) {
-                status.innerText = "Server Error. Try again.";
+                status.style.color = "#ff4444";
+                status.innerText = "Error: " + err.message + ". Try again.";
+            } finally {
+                btn.disabled = false;
+                loader.style.display = "none";
+            }
+        }
+
+        function copyCode() {
+            const code = document.getElementById('result').innerText;
+            if(code) {
+                navigator.clipboard.writeText(code);
+                alert("Pairing Code Copied: " + code);
             }
         }
     </script>
