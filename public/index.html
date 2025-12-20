@@ -7,7 +7,7 @@
     <style>
         :root { --neon: #00f2ff; --bg: #0a0a0a; --card: #151515; --success: #00ff88; --github: #ffffff; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
+
         .container { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); width: 90%; max-width: 400px; text-align: center; position: relative; }
         h2 { color: var(--neon); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
 
@@ -16,11 +16,10 @@
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; outline: none; transition: 0.3s; text-align: center; font-size: 1.1rem; }
         input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
 
-        /* Button Group Styling */
         .btn-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 
         button, .btn-repo { width: 100%; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; border: none; box-sizing: border-box; font-size: 0.9rem; }
-        
+
         #btn { background: var(--neon); color: #000; }
         #btn:hover { box-shadow: 0 0 15px var(--neon); transform: scale(1.02); }
         #btn:disabled { background: #333; cursor: not-allowed; transform: scale(1); color: #666; }
@@ -28,10 +27,13 @@
         .btn-repo { background: transparent; color: var(--github); border: 1px solid var(--github); text-decoration: none; display: flex; align-items: center; justify-content: center; }
         .btn-repo:hover { background: var(--github); color: #000; box-shadow: 0 0 15px var(--github); }
 
+        /* Music Button Style */
+        #musicBtn { background: transparent; color: var(--success); border: 1px solid var(--success); margin-top: 5px; }
+        #musicBtn:hover { background: var(--success); color: #000; box-shadow: 0 0 15px var(--success); }
+
         #result { margin-top: 20px; font-size: 2.2rem; font-weight: bold; color: var(--success); letter-spacing: 8px; cursor: pointer; min-height: 40px; }
         #status { font-size: 0.85rem; opacity: 0.8; margin-top: 10px; min-height: 20px; color: #aaa; padding: 0 10px; }
 
-        /* Loading Animation */
         .spinner { display: none; margin: 10px auto; width: 30px; height: 30px; border: 3px solid rgba(0,242,255,.3); border-radius: 50%; border-top-color: var(--neon); animation: spin 1s ease-in-out infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
@@ -42,13 +44,16 @@
         <div class="divider"></div>
         <p style="margin-bottom: 10px;">Enter WhatsApp Number</p>
         <input type="number" id="number" placeholder="254741819582">
-        
+
         <div class="btn-container">
             <button id="btn" onclick="getCode()">Generate Code</button>
-            <a href="https://github.com/Toxicant1/Toxic.a.n.t-MD" target="_blank" class="btn-repo">
-                Visit Bot Repo
-            </a>
+            <a href="https://github.com/Toxicant1/Toxic.a.n.t-MD" target="_blank" class="btn-repo">Visit Bot Repo</a>
+            <button id="musicBtn" onclick="toggleMusic()">🎵 Play Theme</button>
         </div>
+
+        <audio id="myAudio">
+            <source src="/assets/Paid_to_Exist(128k).m4a" type="audio/mpeg">
+        </audio>
 
         <div class="spinner" id="loader"></div>
         <div class="divider"></div>
@@ -58,6 +63,19 @@
     </div>
 
     <script>
+        const audio = document.getElementById('myAudio');
+        const musicBtn = document.getElementById('musicBtn');
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.innerText = "⏸ Pause Theme";
+            } else {
+                audio.pause();
+                musicBtn.innerText = "🎵 Play Theme";
+            }
+        }
+
         async function getCode() {
             const num = document.getElementById('number').value;
             const status = document.getElementById('status');
@@ -65,7 +83,7 @@
             const btn = document.getElementById('btn');
             const loader = document.getElementById('loader');
 
-            if(!num || num.length < 10) return alert("Please enter a valid phone number with country code!");
+            if(!num || num.length < 10) return alert("Please enter a valid phone number!");
 
             btn.disabled = true;
             loader.style.display = "block";
