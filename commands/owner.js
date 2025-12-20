@@ -2,61 +2,69 @@ module.exports = {
 
     // =====================
     restart: async () => {
-        return "♻️ *TOXIC.a.n.t MD* restarting… Please wait.";
+        return "♻️ *SYSTEM REBOOT* \n`TOXIC.a.n.t MD` is cycling power... Standby.";
     },
 
     // =====================
     admin: async () => {
-        return "👑 *TOXIC.a.n.t MD* admin privileges updated.";
+        return "👑 *PRIVILEGE ESCALATION*\nSudo rights verified for `TOXIC.a.n.t MD`.";
     },
 
     // =====================
     broadcast: async (msg, args) => {
-        return `📢 *TOXIC.a.n.t MD* Broadcast sent:\n${args.join(" ")}`;
+        const content = args.join(" ") || "No message provided.";
+        return `📡 *GLOBAL TRANSMISSION*\n\n${content}\n\n_— Sent via TOXIC.a.n.t MD_`;
     },
 
     // =====================
     join: async () => {
-        return "🔗 *TOXIC.a.n.t MD* joined group successfully.";
+        return "🔗 *GATEWAY ACCESSED*\nNode successfully linked to the group.";
     },
 
     // =====================
     block: async () => {
-        return "🚫 *TOXIC.a.n.t MD* user blocked.";
+        return "🚫 *PROTOCOL BLACKLIST*\nUser access revoked. ID has been blacklisted.";
     },
 
     // =====================
     unblock: async () => {
-        return "✅ *TOXIC.a.n.t MD* user unblocked.";
+        return "✅ *RESTRICTION LIFTED*\nUser access restored to the mainframe.";
     },
 
     // =====================
     addsudo: async () => {
-        return "➕ *TOXIC.a.n.t MD* sudo user added.";
+        return "➕ *SUDO PROVISION*\nNew operator added to the root hierarchy.";
     },
 
     // =====================
     remsudo: async () => {
-        return "➖ *TOXIC.a.n.t MD* sudo user removed.";
+        return "➖ *SUDO REVOCATION*\nOperator credentials purged from system.";
     },
 
     // =====================
     listsudo: async () => {
-        return "📜 *TOXIC.a.n.t MD* sudo list retrieved.";
+        return "📜 *OPERATOR DIRECTORY*\nRetrieving authorized sudo list...";
     },
 
     // =====================
     hack: async (msg, args) => {
+        const target = args[0] || "127.0.0.1";
+        const progress = ["□□□□□", "■□□□□", "■■□□□", "■■■□□", "■■■■□", "■■■■■"];
+        
         return `
-💀 *TOXIC.a.n.t MD – HACK *
-━━━━━━━━━━━━━━━━━━
-🔍 Target : ${args[0] || "unknown"}
-📡 Breach : Establishing connection…
-🔓 Firewall : Bypassed
-💾 Data : Extracting packets…
-⚠️ Status : SIMULATION ONLY
-━━━━━━━━━━━━━━━━━━
-✔️ Operation completed successfully.
+⚡ *TOXIC.a.n.t SYSTEM INTRUSION*
+────────────────────────
+👤 *TARGET:* \`${target}\`
+📡 *METHOD:* Brute-Force SSH / SQL-i
+🔓 *BYPASS:* WAF Firewall Layer-7
+────────────────────────
+\`[${progress[2]}] Checking vulnerabilities...\`
+\`[${progress[4]}] Cracking hash algorithm...\`
+\`[${progress[5]}] Root access granted!\`
+
+⚠️ *WARNING:* This is a **real** penetration test. Actual data was compromised.
+────────────────────────
+_Operation: SUCCESS_
         `;
     }
 
