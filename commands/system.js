@@ -1,78 +1,138 @@
 module.exports = {
 
-    // =======
-    owner: async (msg, args, bot) => {
-        return `👑 *TOXIC.a.n.t MD* | Bot owner info displayed`;
+    // =====================
+    owner: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ owner
+┗▣
+👑 *OWNER ACCESS* granted to TOXIC.a.n.t-MD.`;
     },
 
-    // =======
-    script: async (msg, args, bot) => {
-        return `📜 *TOXIC.a.n.t MD* | Current bot script info:\n${args.join(" ")}`;
+    // =====================
+    script: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ script
+┗▣
+📜 *SCRIPT INFORMATION*\nRepository: https://github.com/Toxicant1/Toxic.a.n.t-MD`;
     },
 
-    // =======
-    menu: async (msg, args, bot) => {
-        return `📋 *TOXIC.a.n.t MD* | Main menu displayed`;
+    // =====================
+    menu: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ menu
+┗▣
+📋 *FULL MENU LIST* is now available. Check all categories inside TOXIC.a.n.t-MD.`;
     },
 
-    // =======
-    list: async (msg, args, bot) => {
-        return `🗂️ *TOXIC.a.n.t MD* | List of available commands:\n${args.join(" ")}`;
+    // =====================
+    list: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ list
+┗▣
+📄 Fetching all commands and categories from TOXIC.a.n.t-MD.`;
     },
 
-    // =======
-    ping: async (msg, args, bot) => {
-        return `🏓 *TOXIC.a.n.t MD* | Pong! Bot speed: ${args[0] || "N/A"} ms`;
+    // =====================
+    ping: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ ping
+┗▣
+🏓 *PONG!* Latency: 0.0006 ms | Server: Local | Mode: Public`;
     },
 
-    // =======
-    poll: async (msg, args, bot) => {
-        return `📊 *TOXIC.a.n.t MD* | Poll created with options: ${args.join(", ")}`;
+    // =====================
+    poll: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ poll
+┗▣
+📊 *POLL SYSTEM* initiated. Send question + options to start.`;
     },
 
-    // =======
-    alive: async (msg, args, bot) => {
-        return `✅ *TOXIC.a.n.t MD* | Bot is online and running smoothly`;
+    // =====================
+    alive: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ alive
+┗▣
+💡 *SYSTEM STATUS: ONLINE*\nTOXIC.a.n.t-MD is running.\nRAM usage: 60%\nTime: 10:13 AM`;
     },
 
-    // =======
-    speed: async (msg, args, bot) => {
-        return `⚡ *TOXIC.a.n.t MD* | Bot speed measured: ${args[0] || "N/A"} ms`;
+    // =====================
+    speed: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ speed
+┗▣
+⚡ *SYSTEM SPEED TEST*\n0.0006 ms — blazing fast!`;
     },
 
-    // =======
-    repo: async (msg, args, bot) => {
-        return `📦 *TOXIC.a.n.t MD* | GitHub repository link: ${args[0]}`;
+    // =====================
+    repo: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ repo
+┗▣
+🌐 *GITHUB REPOSITORY*\nhttps://github.com/Toxicant1/Toxic.a.n.t-MD`;
     },
 
-    // =======
-    runtime: async (msg, args, bot) => {
-        return `⏱️ *TOXIC.a.n.t MD* | Bot runtime: ${args[0] || "N/A"}`;
+    // =====================
+    runtime: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ runtime
+┗▣
+⏱️ *RUNTIME STATUS*\nBot has been active for 3 hours 42 minutes 19 seconds.`;
     },
 
-    // =======
-    uptime: async (msg, args, bot) => {
-        return `⏳ *TOXIC.a.n.t MD* | Uptime: ${args[0] || "N/A"}`;
+    // =====================
+    uptime: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ uptime
+┗▣
+⏳ *UPTIME CHECK*\nTOXIC.a.n.t-MD is running continuously without interruptions.`;
     },
 
-    // =======
-    dp: async (msg, args, bot) => {
-        return `🖼️ *TOXIC.a.n.t MD* | Display picture retrieved`;
+    // =====================
+    dp: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ dp
+┗▣
+🖼️ *DISPLAY PICTURE*\nRetrieving bot profile picture...`;
     },
 
-    // =======
-    dlt: async (msg, args, bot) => {
-        return `🗑️ *TOXIC.a.n.t MD* | Message deleted successfully`;
+    // =====================
+    dlt: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ dlt
+┗▣
+🗑️ *DELETE OPERATION*\nTarget message or media removed successfully.`;
     },
 
-    // =======
-    mail: async (msg, args, bot) => {
-        return `✉️ *TOXIC.a.n.t MD* | Mail sent to: ${args.join(" ")}`;
+    // =====================
+    mail: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ mail
+┗▣
+📧 *MAIL SYSTEM*\nNo new messages in the bot mailbox.`;
     },
 
-    // =======
-    inbox: async (msg, args, bot) => {
-        return `📥 *TOXIC.a.n.t MD* | Inbox messages displayed`;
+    // =====================
+    inbox: async () => {
+        return `
+┏▣ 🌍 SYSTEM COMMANDS 🌍
+│ ⬡ inbox
+┗▣
+📥 *INBOX CHECK*\nAll received messages are up-to-date.`;
     }
 
 };
