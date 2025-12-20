@@ -1,8 +1,8 @@
 {
-  "name": "toxic.a.n.t-md",
+  "name": "toxic.a.n.t-md-server",
   "version": "1.0.0",
-  "description": "Toxic.a.n.t MD WhatsApp Bot v1",
-  "main": "index.js",
+  "description": "Toxic.a.n.t MD WhatsApp Bot Server v1",
+  "main": "server.js",
   "scripts": {
     "start": "node index.js"
   },
@@ -18,8 +18,5 @@
   },
   "engines": {
     "node": ">=16.x"
-  }
-}
-
   }
 }
