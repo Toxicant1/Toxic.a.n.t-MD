@@ -5,86 +5,81 @@
 </p>
 
 <div align="center">
-<a href="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=50&pause=1000&color=1BAFBAFF&center=true&width=910&height=100&lines=HI+THIS+IS+TOXICANT-MD;A+MULTI+DEVICE+WHATSAPP+BOT;SCRIPTED+BY+TOXICANT;STAR+AND+FORK+REPO" alt="Typing SVG" /></a>
+  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=45&pause=1000&color=00F2FF&center=true&width=910&height=100&lines=HI+THIS+IS+TOXICANT-MD;A+MULTI+DEVICE+WHATSAPP+BOT;SCRIPTED+BY+TOXICANT;FORK+AND+STAR+NOW" alt="Typing SVG" />
 </div>
+
 <p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
-</p>
-<p align="center">
-<a href="#"><img title="Bot Name" src="http://readme-typing-svg.herokuapp.com?color=d1fa02&center=true&vCenter=true&multiline=false&lines=𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD" alt=""></a>
-</p>
-<p align="center">
-<a href="#"><img title="Creator" src="https://img.shields.io/badge/Creator-Toxicant-blue.svg?style=for-the-badge&logo=github"></a>
-</p>
-<p align="center">
-<a href="https://github.com/Toxicant1?tab=followers"><img title="Followers" src="https://img.shields.io/github/followers/Toxicant1?label=Followers&style=social"></a>
-<a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/Toxicant1/Toxic.a.n.t-MD?&style=social"></a>
-<a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/network/members"><img title="Fork" src="https://img.shields.io/github/forks/Toxicant1/Toxic.a.n.t-MD?style=social"></a>
-<a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/Toxicant1/Toxic.a.n.t-MD?label=Watching&style=social"></a>
+  <img src="https://i.imgur.com/dBaSKWF.gif" width="100%" />
 </p>
 
 <p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
+  <a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/stargazers"><img src="https://img.shields.io/github/stars/Toxicant1/Toxic.a.n.t-MD?style=for-the-badge&color=00F2FF&logo=github" alt="Stars"></a>
+  <a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/network/members"><img src="https://img.shields.io/github/forks/Toxicant1/Toxic.a.n.t-MD?style=for-the-badge&color=00F2FF&logo=github" alt="Forks"></a>
+  <a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/watchers"><img src="https://img.shields.io/github/watchers/Toxicant1/Toxic.a.n.t-MD?style=for-the-badge&color=00F2FF&logo=github" alt="Watchers"></a>
 </p>
 
-## 📱 CONTACT ME
-<p align="center">
-<a href="https://api.whatsapp.com/send?phone=254741819582&text=Hello+👋+Toxicant"><img src="https://img.shields.io/badge/Contact%20Merchant-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" /></a>
-</p>
-<p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
-</p>
-
-## ⚠️ DISCLAIMER
-Modifying the bot structure is at your own risk. We do not provide technical support for errors caused by unauthorized changes.
-
-<p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
-</p>
+---
 
 ## 🚀 FEATURES
-- Multi-device WhatsApp bot  
-- Group management tools  
-- Media commands: audio, video, downloads, stickers  
-- AI commands with ChatGPT integration  
-- Fun & Games: jokes, quotes, anime content, and more  
-- Customizable prefix, modes, and settings  
-- ⚠️ Some AI APIs may occasionally be down  
+* **Multi-Device Support:** Runs seamlessly on the latest WhatsApp MD.
+* **Automated Management:** Advanced group moderation tools.
+* **Media Processing:** Instant sticker creation, video/audio downloads.
+* **AI Integration:** Powered by ChatGPT for intelligent responses.
+* **24/7 Stability:** Optimized for hosting on Render, Heroku, or VPS.
 
-<p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
+---
+
+## 🛠 SETUP & DEPLOYMENT
+
+To get your bot up and running, follow these three simple steps:
+
+### 1. Repository Preparation
+First, you need to create your own copy of the script.
+<p align="left">
+  <a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/fork">
+    <img src="https://img.shields.io/badge/FORK_REPO-FF0055?style=for-the-badge&logo=github&logoColor=white" />
+  </a>
 </p>
 
-## 🛠 SETUP
-
-### 1️⃣ Fork this repo
-<p align="center">
-<a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/fork"><img src="https://img.shields.io/badge/Fork%20Repo-purple?style=for-the-badge&logo=github" alt="Fork Repo" /></a>
+### 2. Session Pairing
+Connect your WhatsApp account to the bot to generate a `SESSION_ID`.
+<p align="left">
+  <a href="https://blacks-pair.onrender.com">
+    <img src="https://img.shields.io/badge/GET_SESSION-00FF88?style=for-the-badge&logo=render&logoColor=black" />
+  </a>
 </p>
 
-### 2️⃣ Pair on Render
-<p align="center">
-<a href="https://blacks-pair.onrender.com"><img src="https://img.shields.io/badge/Get%20Session-green?style=for-the-badge&logo=render" alt="Get Session" /></a>
+### 3. Final Deployment
+Choose your preferred platform to host the bot.
+<p align="left">
+  <a href="https://blacks-progressive-platform.vercel.app/">
+    <img src="https://img.shields.io/badge/DEPLOY_TO_HEROKU-673AB7?style=for-the-badge&logo=heroku&logoColor=white" />
+  </a>
+  <a href="https://dashboard.render.com/">
+    <img src="https://img.shields.io/badge/DEPLOY_TO_RENDER-46E3B7?style=for-the-badge&logo=render&logoColor=white" />
+  </a>
 </p>
 
-### 3️⃣ Deploy
-<p align="center">
-<a href="https://blacks-progressive-platform.vercel.app/"><img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" /></a>
-</p>
+---
+
+## 📱 CONNECT WITH DEVELOPER
+Have questions or need help? Reach out directly:
 
 <p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
+  <a href="https://api.whatsapp.com/send?phone=254741819582&text=Hello+Toxicant,+I+need+help+with+the+bot">
+    <img src="https://img.shields.io/badge/WHATSAPP_CONTACT-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
+  </a>
 </p>
 
-## 🎖 CREDITS
-<p align="center">
-<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=50&pause=1000&color=1BAFBAFF&center=true&width=910&height=100&lines=CREDITED+TO+TOXICANT" alt="Typing SVG" /></a>
-</p>
+---
+
+## ⚠️ DISCLAIMER
+> [!WARNING]  
+> Modifying the bot structure is at your own risk. We do not provide technical support for errors caused by unauthorized changes to the core files.
 
 ## 📜 LICENSE
-MIT License  
-Copyright (c) 2025 𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
 <p align="center">
-  <img src="https://i.imgur.com/dBaSKWF.gif" width="90%" alt="Divider" />
+  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=30&pause=1000&color=00F2FF&center=true&width=910&height=50&lines=CREDITED+TO+TOXICANT" alt="Footer SVG" />
 </p>
