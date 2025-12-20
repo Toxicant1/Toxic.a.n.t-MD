@@ -1,36 +1,48 @@
-𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD
-​<p align="center">
-<img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=45&pause=1000&color=1BAFBAFF&center=true&width=910&height=100&lines=TOXICANT-MD+IS+LIVE;MULTI-DEVICE+WHATSAPP+BOT;POWERED+BY+NODEJS;STAR+AND+FORK+NOW" alt="Typing SVG" />
+☣️ 𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD
+<p align="center">
+<img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=40&pause=1000&color=00F7FF&center=true&width=910&height=100&lines=TOXICANT-MD+V1;DEVELOPED+BY+MERCHANT;A+POWERFUL+WHATSAPP+ASSISTANT" alt="Typing SVG" />
 </p>
-​<p align="center">
-<img src="https://i.imgur.com/dBaSKWF.gif" width="100%">
-</p>
-​📌 Overview
-​Toxic.a.n.t-MD is a powerful, multi-device WhatsApp bot built with Node.js and the Baileys library. It is designed for group management, media automation, and AI-driven interactions.
-​🚀 Key Features
-​Group Management: Full control over participants, settings, and automation.
-​Media Toolkit: Download videos, convert audio, and create high-quality stickers.
-​Advanced AI: Integrated with ChatGPT and custom "Toxic AI" personality modes.
-​Entertainment: Access to jokes, advice, quotes, and a dedicated anime module.
-​High Customization: Easily change prefixes, bot modes, and response styles.
-​🛠️ Deployment Steps
-​Follow these steps to get your bot up and running:
-​1. Repository Preparation
-​First, you must fork the repository to your own GitHub account.
-​<p align="left">
-<a href="https://github.com/Toxicant1/Toxic.a.n.t-MD/fork">
-<img src="https://img.shields.io/badge/Fork%20Repository-purple?style=for-the-badge&logo=github" alt="Fork">
-</a>
-</p>
-​2. Obtain Session ID
-​Link your WhatsApp account to get the required session string.
-​<p align="left">
-<a href="https://blacks-pair.onrender.com">
-<img src="https://img.shields.io/badge/Get%20Session-green?style=for-the-badge&logo=render" alt="Pairing">
-</a>
-</p>
-​3. Deploy to Hosting
-​Choose your preferred platform to host the bot:
-Platform Deployment Link
-Heroku  
-Github Repo
+📑 Table of Contents
+ * About the Bot
+ * Key Features
+ * Quick Setup
+ * Deployment Methods
+ * Contact & Support
+🤖 About The Bot
+Toxic.a.n.t-MD is a high-performance, multi-device WhatsApp bot built on Node.js utilizing the Baileys library. It is designed to be fast, stable, and highly customizable for both private and group use.
+🌟 Key Features
+ * Media Automation: Seamlessly download YouTube, TikTok, and Instagram media.
+ * AI Integration: Built-in ChatGPT and specialized "Toxic AI" personality modes.
+ * Group Management: Advanced tools for admins (Auto-kick, Welcome/Goodbye, Mute).
+ * Fun & Utility: Sticker making, anime searches, games, and daily quotes.
+ * Lightweight: Optimized for deployment on free-tier platforms like Heroku and Render.
+🚀 Quick Setup
+1. Fork the Project
+Click the button below to fork this repository to your profile.
+
+2. Get Session ID
+You need a session ID to link your WhatsApp account.
+
+📥 Deployment Methods
+Choose your preferred hosting platform to get started:
+| Platform | Status | Action |
+|---|---|---|
+| Heroku | 🟢 Stable | Deploy Now |
+| Koyeb | 🟢 Stable | Manual Deploy |
+| VPS / Local | 🟢 Recommended | git clone https://github.com/Toxicant1/Toxic.a.n.t-MD.git |
+⚙️ Configuration
+| Variable | Description |
+|---|---|
+| SESSION_ID | Your unique session code from the pairing site. |
+| OWNER_NUMBER | Your WhatsApp number (e.g., 254741819582). |
+| PREFIX | The character to trigger commands (e.g., ., !). |
+| MODE | Set to public or private. |
+📞 Contact & Support
+If you encounter any issues or want to suggest features:
+ * Developer: Merchant
+ * WhatsApp: Message Merchant
+ * GitHub: @Toxicant1
+📜 License & Disclaimer
+> Notice: This project is under the MIT License.
+> Disclaimer: We are not responsible for any banned accounts. Use this bot responsibly and avoid spamming.
+> 
