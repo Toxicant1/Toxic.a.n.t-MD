@@ -6,9 +6,10 @@ const {
     useMultiFileAuthState, 
     delay, 
     makeCacheableSignalKeyStore,
-    DisconnectReason 
+    DisconnectReason,
+    Browsers // Added this
 } = require("@whiskeysockets/baileys");
-const fs = require('fs-extra'); // Using fs-extra for cleaner folder handling
+const fs = require('fs-extra');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,14 +23,13 @@ function startWeb() {
 
         num = num.replace(/[^0-9]/g, ''); 
 
-        // CRITICAL: Clean old attempts to prevent "Stuck" status
         if (fs.existsSync(`./temp/${num}`)) {
             fs.rmSync(`./temp/${num}`, { recursive: true, force: true });
         }
 
         console.log("---------------------------------------");
-        console.log(`🚀 FORCING TRIGGER FOR: ${num}`);
-        
+        console.log(`🚀 ATTEMPTING SECURE LINK FOR: ${num}`);
+
         const { state, saveCreds } = await useMultiFileAuthState(`./temp/${num}`);
 
         try {
@@ -40,25 +40,33 @@ function startWeb() {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                browser: ["Ubuntu", "Chrome", "20.0.04"] 
+                // FIX 1: Use the most stable browser signature
+                browser: Browsers.ubuntu("Chrome"), 
+                // FIX 2: Increase timeouts for Render's slow CPU
+                connectTimeoutMs: 120000, // 2 minutes
+                defaultQueryTimeoutMs: 120000,
+                keepAliveIntervalMs: 10000,
+                generateHighQualityLink: true,
+                syncFullHistory: false, // Prevents lag by not downloading old chats
+                markOnlineOnConnect: true
             });
 
-            // If it takes more than 30 seconds, tell the user to try again
             const timeout = setTimeout(() => {
                 if (!res.headersSent) {
-                    res.status(408).json({ error: "Connection Timeout. Please refresh." });
-                    sock.logout();
+                    res.status(408).json({ error: "WhatsApp took too long. Try again." });
+                    sock.end();
                 }
-            }, 35000);
+            }, 50000);
 
             if (!sock.authState.creds.registered) {
-                await delay(5000); // 5s delay gives Render time to stabilize
+                // FIX 3: Longer delay before requesting code to let socket stabilize
+                await delay(8000); 
                 const code = await sock.requestPairingCode(num);
 
                 if (!res.headersSent) {
                     clearTimeout(timeout);
                     res.json({ code: code });
-                    console.log(`✅ SUCCESS: ${code}`);
+                    console.log(`✅ CODE GENERATED: ${code}`);
                 }
             }
 
@@ -68,43 +76,39 @@ function startWeb() {
                 const { connection, lastDisconnect } = s;
 
                 if (connection === "open") {
-                    console.log(`🏆 LINKED SUCCESS: ${num}`);
+                    console.log(`🏆 LINKED SUCCESSFULLY: ${num}`);
                     await delay(5000); 
-                    
+
                     const sessionFile = `./temp/${num}/creds.json`;
                     if (fs.existsSync(sessionFile)) {
                         const creds = JSON.parse(fs.readFileSync(sessionFile));
                         const sessionID = Buffer.from(JSON.stringify(creds)).toString('base64');
 
                         await sock.sendMessage(sock.user.id, { 
-                            text: `*𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD SESSION ID*\n\n*ID:* Toxicant;;${sessionID}` 
+                            text: `*𝕿𝖔𝖝𝖎𝖈.𝖆.𝖓.𝖙-MD SESSION ID*\n\n*ID:* Toxicant;;${sessionID}\n\n_Successfully connected via Render Station._` 
                         });
                     }
 
-                    // Auto-cleanup
                     setTimeout(() => { 
                         try { fs.rmSync(`./temp/${num}`, { recursive: true, force: true }); } catch(e) {}
-                    }, 15000);
+                    }, 10000);
                 }
 
                 if (connection === "close") {
                     let reason = lastDisconnect?.error?.output?.statusCode;
-                    if (reason !== DisconnectReason.loggedOut) {
-                        // Logic to restart if necessary
-                    }
+                    console.log(`❌ Connection Closed. Reason Code: ${reason}`);
+                    // If it's a restartable error, it will try again on next click
                 }
             });
 
         } catch (e) {
             console.log("❌ ERROR:", e);
-            if (!res.headersSent) res.status(500).json({ error: "Trigger Failed" });
+            if (!res.headersSent) res.status(500).json({ error: "Handshake Failed" });
         }
     });
 
     app.listen(port, () => {
-        console.log("=======================================");
-        console.log(`   TOXICANT-MD STATION: PORT ${port}   `);
-        console.log("=======================================");
+        console.log(`TOXICANT-MD SERVER LIVE ON PORT ${port}`);
     });
 }
 
