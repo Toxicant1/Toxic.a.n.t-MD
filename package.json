@@ -1,0 +1,16 @@
+{
+  "name": "toxicant-md",
+  "version": "1.0.0",
+  "description": "Toxic.a.n.t MD WhatsApp Bot v1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "TOXICTEC",
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^5.0.2",
+    "express": "^4.18.2",
+    "qrcode": "^1.5.1"
+  }
+}
