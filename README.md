@@ -1,4 +1,4 @@
-#☣️ ToxicAnt-MD
+☣️ ToxicAnt-MD
 <p align="center">
 <img src="commands/assets/ToxicAnt-MD.png" alt="ToxicAnt-MD Banner" width="700"/>
 </p>
