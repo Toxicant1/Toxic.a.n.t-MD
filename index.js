@@ -1,29 +1,18 @@
-const { startWeb } = require("./pairing");
-
-// ======= TOXIC.a.n.t MD SYSTEM INITIALIZER =======
+const { startWeb } = require('./pairing');
 
 console.log(`
   ___________________________________________
  |                                           |
- |         TOXIC.a.n.t MD - PAIRING          |
- |       Initializing Web Interface...       |
+ |         TOXIC.a.n.t MD - STARTING         |
  |___________________________________________|
 `);
 
-/**
- * Handle unexpected errors to keep the server alive
- */
-process.on("unhandledRejection", (reason, p) => {
-    console.log(" [ERROR] Unhandled Rejection at: ", p, " reason: ", reason);
+process.on('unhandledRejection', (reason) => {
+    console.log('[ERROR] Unhandled Rejection:', reason);
 });
 
-process.on("uncaughtException", (err) => {
-    console.log(" [ERROR] Uncaught Exception: ", err);
+process.on('uncaughtException', (err) => {
+    console.log('[ERROR] Uncaught Exception:', err);
 });
 
-// Start the clean pairing interface
-try {
-    startWeb();
-} catch (error) {
-    console.error(" [CRITICAL] Failed to start Web Service:", error);
-}
+startWeb();
