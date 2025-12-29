@@ -15,18 +15,14 @@ const port = process.env.PORT || 3000;
 const SESSION_PATH = path.join(__dirname, 'session');
 
 async function startWeb() {
-    // Ensure session directory exists
-    if (!fs.existsSync(SESSION_PATH)) {
-        fs.mkdirSync(SESSION_PATH);
-    }
-
-    app.use(express.static(path.join(__dirname, 'public')));
-
     app.get('/code', async (req, res) => {
         let num = req.query.number;
         if (!num) return res.status(400).json({ error: 'No number provided' });
 
         num = num.replace(/[^0-9]/g, '');
+
+        // 1. Clean start: If session is broken, pairing often fails
+        // Consider deleting the session folder manually if issues persist
 
         const { state, saveCreds } = await useMultiFileAuthState(SESSION_PATH);
 
@@ -37,46 +33,35 @@ async function startWeb() {
             },
             logger: pino({ level: 'fatal' }),
             printQRInTerminal: false,
-            // Chrome is better for pairing codes
+            // Use a standard browser string to avoid being blocked
             browser: ["Ubuntu", "Chrome", "20.0.04"], 
-        });
-
-        // Handle connection updates
-        sock.ev.on('connection.update', async (update) => {
-            const { connection, lastDisconnect } = update;
-            if (connection === 'open') {
-                console.log('✅ TOXIC.a.n.t MD CONNECTED');
-            }
-            if (connection === 'close') {
-                const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-                if (shouldReconnect) {
-                    console.log('Connection closed, reconnecting...');
-                    // Logic to restart if needed
-                }
-            }
         });
 
         sock.ev.on('creds.update', saveCreds);
 
+        // 2. The Fix: Request code only when the socket is ready to communicate
         try {
             if (!sock.authState.creds.registered) {
-                await delay(1500); // Give it a moment to initialize
+                // Wait for the socket to initialize internal listeners
+                await delay(3000); 
+                
                 const code = await sock.requestPairingCode(num);
+                console.log(`✅ Code generated for ${num}: ${code}`);
+                
                 if (!res.headersSent) {
                     return res.json({ code });
                 }
             } else {
-                return res.json({ message: 'Already paired' });
+                return res.json({ message: 'Device already logged in' });
             }
-        } catch (error) {
-            console.error("Error requesting pairing code:", error);
-            res.status(500).json({ error: "Failed to generate code" });
+        } catch (err) {
+            console.error("Pairing Error:", err);
+            res.status(500).json({ error: "Service busy, try again in 10 seconds" });
         }
     });
 
     app.listen(port, () => {
-        console.log(`🌐 SERVER RUNNING ON: http://localhost:${port}`);
-        console.log(`🔗 GET CODE VIA: http://localhost:${port}/code?number=YOUR_NUMBER`);
+        console.log(`🌐 TOXIC.a.n.t MD SERVER ONLINE`);
     });
 }
 
