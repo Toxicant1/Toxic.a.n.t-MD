@@ -44,7 +44,7 @@ First, you need to create your own copy of the script.
 ### 2. Session Pairing
 Connect your WhatsApp account to the bot to generate a `SESSION_ID`.
 <p align="left">
-  <a href="https://blacks-pair.onrender.com">
+  <a href="https://toxic-a-n-t-md.onrender.com/">
     <img src="https://img.shields.io/badge/GET_SESSION-00FF88?style=for-the-badge&logo=render&logoColor=black" />
   </a>
 </p>
