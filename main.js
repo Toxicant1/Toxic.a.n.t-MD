@@ -1,93 +1,78 @@
-const {
-    default: makeWASocket,
-    useMultiFileAuthState,
-    makeCacheableSignalKeyStore,
-    DisconnectReason
+const { 
+    default: ravenConnect, 
+    useMultiFileAuthState, 
+    DisconnectReason, 
+    fetchLatestBaileysVersion 
 } = require("@whiskeysockets/baileys");
+const { File } = require('megajs');
+const fs = require("fs-extra");
 const pino = require("pino");
-const { ownerNumber, prefix } = require("./config");
+const config = require('./config');
 
-async function startBot() {
-    const { state, saveCreds } = await useMultiFileAuthState("./session");
+async function startRaven() {
+    // --- MEGA SESSION DOWNLOADER ---
+    if (!fs.existsSync(__dirname + '/sessions/creds.json') && config.SESSION_ID) {
+        const sessdata = config.SESSION_ID.replace("TOXIC-MD;;;", "");
+        const filer = File.fromURL(`https://mega.nz/file/${sessdata}`);
+        await new Promise((resolve) => {
+            filer.download((err, data) => {
+                if (err) return resolve(console.log("Mega Download Error"));
+                fs.ensureDirSync(__dirname + '/sessions/');
+                fs.writeFileSync(__dirname + '/sessions/creds.json', data);
+                console.log("✅ Session downloaded successfully");
+                resolve();
+            });
+        });
+    }
 
-    const sock = makeWASocket({
-        auth: {
-            creds: state.creds,
-            keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
-        },
-        logger: pino({ level: "fatal" }),
-        browser: ["Toxic.a.n.t MD", "Chrome", "1.0.0"],
+    const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions/');
+    const { version } = await fetchLatestBaileysVersion();
+
+    const client = ravenConnect({
+        version,
+        logger: pino({ level: "silent" }),
+        printQRInTerminal: true,
+        browser: ["TOXIC-MD", "Safari", "1.0.0"],
+        auth: state
     });
 
-    sock.ev.on("creds.update", saveCreds);
+    client.ev.on("creds.update", saveCreds);
 
-    console.log("🤖 Toxic.a.n.t MD v1 started!");
-    console.log("Commands ready: Settings, Owner, AI, Group, System, Extras, Sticker");
-
-    // 👇 THIS is the missing link
-    sock.ev.on("messages.upsert", async ({ messages }) => {
-        const msg = messages[0];
-        if (!msg.message || msg.key.fromMe) return;
-
-        const from = msg.key.remoteJid;
-        const body =
-            msg.message.conversation ||
-            msg.message.extendedTextMessage?.text ||
-            "";
-
-        if (!body.startsWith(prefix)) return;
-
-        const command = body.slice(prefix.length).trim().split(" ")[0];
-
-        let reply;
-
-        switch (command) {
-            case "menu":
-                reply =
-                    "📜 *Toxic.a.n.t MD Commands*\n" +
-                    "- Settings\n- Owner\n- AI\n- Group\n- System\n- Extras\n- Sticker";
-                break;
-
-            case "ping":
-                reply = "🏓 Pong!";
-                break;
-
-            case "alive":
-                reply = "🤖 Toxic.a.n.t MD is online and running!";
-                break;
-
-            case "restart":
-                if (!from.includes(ownerNumber)) {
-                    reply = "❌ Only owner can restart!";
-                } else {
-                    reply = "♻️ Restarting bot...";
-                    await sock.sendMessage(from, { text: reply });
-                    process.exit(1);
-                }
-                break;
-
-            default:
-                reply = "❌ Unknown command!";
-        }
-
-        if (reply) {
-            await sock.sendMessage(from, { text: reply });
-        }
-    });
-
-    sock.ev.on("connection.update", (update) => {
-        if (update.connection === "open") {
-            console.log("🔥 WhatsApp connected successfully");
-        }
-        if (update.connection === "close") {
-            const reason = update.lastDisconnect?.error?.output?.statusCode;
-            if (reason !== DisconnectReason.loggedOut) {
-                startBot();
-            } else {
-                console.log("❌ Logged out. Delete session & re-pair.");
+    client.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update;
+        if (connection === 'close') {
+            if (lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut) {
+                startRaven(); // Auto-reconnect
             }
+        } else if (connection === 'open') {
+            console.log("✅ TOXIC-MD is online and connected!");
         }
     });
+
+    // --- AUTOMATED FEATURES ---
+    client.ev.on("messages.upsert", async (chatUpdate) => {
+        let mek = chatUpdate.messages[0];
+        if (!mek.message) return;
+
+        // Auto Status View
+        if (config.AUTO_VIEW_STATUS === 'TRUE' && mek.key.remoteJid === "status@broadcast") {
+            await client.readMessages([mek.key]);
+        }
+
+        // Call Command Handler (Example logic to link your commands folder)
+        const m = require('./lib/ravenfunc').smsg(client, mek); // Using your existing lib helper
+        require('./index')(client, m, chatUpdate); // Directs to command logic
+    });
+
+    // Anticall
+    client.ev.on('call', async (call) => {
+        if (config.ANTICALL === 'TRUE') {
+            await client.rejectCall(call[0].id, call[0].from);
+            await client.sendMessage(call[0].from, { text: "⚠️ Calls are auto-rejected by TOXIC-MD." });
+        }
+    });
+
+    return client;
 }
 
-module.exports = { startBot };
+module.exports = { startRaven };
