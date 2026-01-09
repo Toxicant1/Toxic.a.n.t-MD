@@ -58,6 +58,25 @@ async function startRaven() {
         if (config.AUTO_VIEW_STATUS === 'TRUE' && mek.key.remoteJid === "status@broadcast") {
             await client.readMessages([mek.key]);
         }
+    // --- MESSAGE HANDLER ---
+    client.ev.on("messages.upsert", async (chatUpdate) => {
+        try {
+            let mek = chatUpdate.messages[0];
+            if (!mek.message) return;
+
+            // 1. Use the helper from your lib
+            const { smsg } = require('./lib/ravenfunc');
+            const m = smsg(client, mek); 
+            
+            // 2. Trigger your new TOXIC handler
+            const toxicHandler = require("./toxic"); 
+            await toxicHandler(client, m, chatUpdate); 
+
+        } catch (err) {
+            console.log("Error in Main Upsert:", err);
+        }
+    });
+
 
         // Call Command Handler (Example logic to link your commands folder)
         const m = require('./lib/ravenfunc').smsg(client, mek); // Using your existing lib helper
