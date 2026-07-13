@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { startRaven, getPairingStatus } = require('./main');
 
-// GET /code?number=2547XXXXXXXX  (digits only, country code, no + or spaces)
+// GET /code?number=2547XXXXXXXX
 router.get('/code', async (req, res) => {
-    const number = (req.query.number || '').replace(/[^0-9]/g, '');
+    // Check if a number was provided in the URL, clean it up
+    let number = (req.query.number || '').replace(/[^0-9]/g, '');
 
+    // Fallback: If no number is provided in the URL, use your default number
     if (!number) {
-        return res.status(400).json({
-            error: 'Provide your number as ?number=2547XXXXXXXX (digits only, include country code, no +)'
-        });
+        number = '254743540296';
     }
 
     const status = getPairingStatus();
